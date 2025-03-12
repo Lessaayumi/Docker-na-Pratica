@@ -54,6 +54,10 @@ O objetivo desses exercícios é ensinar, na prática, como usar Docker para cri
 - Antes de iniciarmos a criação do nosso container, é essencial verificar se o Docker está devidamente instalado em nossa máquina com o sistema operacional Ubuntu. No terminal, devemos digitar o seguinte comando:
 
           docker --version
+  
+  - Se o Docker estiver devidamente instalado, o comando retornará as seguintes informações contidas na imagem:
+
+    
 
 
 
