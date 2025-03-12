@@ -50,12 +50,29 @@ O objetivo desses exercícios é ensinar, na prática, como usar Docker para cri
 
 ## 3. Rodando containers simples, interagindo com terminais e gerenciando containers.
 
-## 3.1. Rodando um container básico
 - Antes de iniciarmos a criação do nosso container, é essencial verificar se o Docker está devidamente instalado em nossa máquina com o sistema operacional Ubuntu. No terminal, devemos digitar o seguinte comando:
 
           docker --version
   
   - Se o Docker estiver devidamente instalado, o comando retornará as seguintes informações contidas na imagem:
+ 
+    ![Image](https://github.com/user-attachments/assets/2666d188-ad34-440c-bf7f-ab9590ba06f1)
+
+  - Caso o Docker não esteja instalado, devemos executar os seguintes comandos para proceder com a instalação
+
+        sudo apt update
+        sudo apt install docker.io -y
+
+  - Após a instalação, é recomendável verificar se o serviço do Docker está ativo com:
+
+        sudo systemctl status docker
+ 
+  - Para verificar se o Docker está funcionando corretamente, podemos executar a imagem de teste "hello-world" com o seguinte comando:
+ 
+    
+
+    ## 3.1. Rodando um container básico
+
 
     
 
