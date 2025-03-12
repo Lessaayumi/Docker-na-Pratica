@@ -68,8 +68,13 @@ O objetivo desses exercícios é ensinar, na prática, como usar Docker para cri
         sudo systemctl status docker
  
   - Para verificar se o Docker está funcionando corretamente, podemos executar a imagem de teste "hello-world" com o seguinte comando:
- 
-    
+
+        docker run hello-world
+
+  - Se tudo estiver configurado corretamente, o Docker fará o download da imagem e exibirá uma mensagem confirmando que o container foi executado com sucesso, assim como a imagem abaixo.
+
+    ![Image](https://github.com/user-attachments/assets/aed0862f-9095-44f2-a3c8-e01802850b22)
+
 
     ## 3.1. Rodando um container básico
 
