@@ -84,9 +84,10 @@ O objetivo desses exercícios é ensinar, na prática, como usar Docker para cri
 
           docker run -d -p 8080:80 --name meu-nginx nginx
       
-    - Para ver se funcionou, basta abrir o nevagador e ir até o link http://localhost:8080, a imagem abaixo demonstra como irá aparecer o no navagedor.
-    - 
-
+    - Para verificar se o container está funcionando corretamente, basta abrir o navegador e acessar o link **http://localhost:8080**. A imagem abaixo ilustra como a página será exibida no navegador.
+ 
+      ![Image](https://github.com/user-attachments/assets/d6cb0ebc-f320-4c6d-b429-ea715f30b134)
+      
     - **Explicações** O comando `docker run -d -p 8080:80 --name meu-nginx nginx` inicia um container em segundo plano (`-d`), utilizando a imagem do **Nginx**. A opção `-p 8080:80` define que a porta **80** do container será acessível pela porta **8080** da máquina host, permitindo que o Nginx seja acessado pelo navegador. O parâmetro `--name meu-nginx` atribui um nome personalizado ao container, facilitando sua identificação.
       
       
