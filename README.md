@@ -77,6 +77,21 @@ O objetivo desses exercícios é ensinar, na prática, como usar Docker para cri
 
 
     ## 3.1. Rodando um container básico
+    - **Objetivo**: Executar um container usando a imagem do Nginx e acesse a página padrão no navegador.
+    - Exemplo de aplicação: Use a landing page do TailwindCSS como site estático dentro do container.
+
+    - Para executar um container utilizando a imagem do Nginx, basta rodar o seguinte comando:
+
+          docker run -d -p 8080:80 --name meu-nginx nginx
+      
+    - Para ver se funcionou, basta abrir o nevagador e ir até o link http://localhost:8080, a imagem abaixo demonstra como irá aparecer o no navagedor.
+    - 
+
+    - **Explicações** O comando `docker run -d -p 8080:80 --name meu-nginx nginx` inicia um container em segundo plano (`-d`), utilizando a imagem do **Nginx**. A opção `-p 8080:80` define que a porta **80** do container será acessível pela porta **8080** da máquina host, permitindo que o Nginx seja acessado pelo navegador. O parâmetro `--name meu-nginx` atribui um nome personalizado ao container, facilitando sua identificação.
+      
+      
+
+      
 
 
     
