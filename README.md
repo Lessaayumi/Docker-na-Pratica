@@ -101,7 +101,45 @@ O objetivo desses exercícios é ensinar, na prática, como usar Docker para cri
 
       - Teremos a seguinte visualição quando acessarmos http://localhost:8080.
 
+          ![Image](https://github.com/user-attachments/assets/7c04a32f-f0fc-4285-9289-595bfb736aa7)
         
+
+     ## 3.1. Criando e rodando um container interativo.
+
+      - Primeiro temos que rodar um contaneir no Ubuntu que seja interativo, para isso, utilizamos o comando:
+
+            docker run -it --name meu-ubuntu ubuntu bash
+        
+      - Quando executar esse comando você entrará dentro dele, antes de inociarmos a interação com ele vamos rodar o comando abaixo para atualizar o sistema:
+
+            apt update && apt install -y curl
+
+      - Caso queria sair do container sem parar a sua execução é só utilizar o comando `exit` e para retornar usa-se o comando `docker start -ai meu-ubuntu`
+   
+      - Agora, vamos criar um script `.sh` para que esse container possa interagir. Para isso utilizamos o comando:
+   
+            nano logs.sh
+        
+      -  Dentro desse arquivo vamos fazer um programas simples para gerir logs fos sistemas, data e hora, uso de discos e memória.
+   
+             #!/bin/bash
+
+             echo "=== Logs do Sistema ==="
+             echo "Data e Hora: $(date)"
+             echo "Uso de Disco:"
+             df -h
+             echo "Uso de Memória:"
+             free -m
+
+     - Após salver e sair, vamos começar o processo de automatizar esse script, no terminal terá que digitar o seguinte comando.
+
+             chmod +x logs.sh
+
+    - Agora para visualizar ele é só digitamos:
+   
+           ./logs.sh
+
+    -  Ele nós dara as seguintes informações, conforme a imagem. 
         
 
       
