@@ -168,8 +168,34 @@ O objetivo desses exercícios é ensinar, na prática, como usar Docker para cri
 
 - Um comando que facilita caso todos containers parados não seja mais útils é `docker container prune`, ele irá remover todos os containers que não estão mais em execução.
 
+## 3.4. Criando um Dockerfile para uma aplicação simples em Python.
+   - Para iniciar a criação do *Dockerfile* utilizando uma aplicação *Flask*, primeiramente, é necessário criar um diretório que armazenará o conteúdo a ser exibido. Para isso iremos utilizar comando:
 
-      
+         mkdir flask-app && cd flask-app
+
+  - Dentro da pasta flask-app iremos criar o arquivo com o comando `nano nome_do_arquivo`, dentro desse arquivo iremos agregar o seguinte script:
+
+        echo "from flask import Flask
+        app = Flask(__name__)
+        @app.route('/')
+        def home():
+           return 'Olá, Docker!'
+        if __name__ == '__main__':
+           app.run(host='0.0.0.0', port=5000)" > app.py
+
+    - Agora iremos criar um Dockerfile e nele colocaremos o seguinte conteúdo:
+
+          echo "FROM python:3.9
+          WORKDIR /app
+          COPY app.py .
+          RUN pip install flask
+          CMD ['python', 'app.py']" > Dockerfile
+
+    - Depois desses passos, temos que construir a imagem que será transmitida, para isso utilizaremos o comando `docker build -t flask-app` e por fim terá que rodar o contaneir com o comando `docker run -d -p 5000:5000 flask-app`.
+   
+    - Em http://localhost:5000, você irá ver a imagem que foi contruisda.
+
+
 
 
         
