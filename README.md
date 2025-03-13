@@ -9,11 +9,8 @@ Repositório com exercícios práticos de Docker, desde containers básicos até
    
 3. [Rodando containers simples, interagindo com terminais e gerenciando containers.](#Rodando-containers-simples,-interagindo-com-terminais-e-gerenciando-containers.)  
    3.1. [Rodando um container básico](#Rodando-um-container-básico)
-   
    3.2. [Criando e rodando um container interativo.](#Criando-e-rodando-um-container-interativo.)
-   
    3.3. [Listando e removendo containers.](#Listando-e-removendo-containers.)
-   
    3.4. [Criando um Dockerfile para uma aplicação simples em Python.](#Criando-um-Dockerfile-para-uma-aplicação-simples-em-Python.)
    
 4. [Persistência de dados, redes Docker e otimização de imagens.](#Persistência-de-dados,-redes-Docker-e-otimização-de-imagens.)  
