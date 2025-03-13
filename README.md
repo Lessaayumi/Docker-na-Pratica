@@ -193,8 +193,11 @@ O objetivo desses exercícios é ensinar, na prática, como usar Docker para cri
 
     - Depois desses passos, temos que construir a imagem que será transmitida, para isso utilizaremos o comando `docker build -t flask-app` e por fim terá que rodar o contaneir com o comando `docker run -d -p 5000:5000 flask-app`.
    
-    - Em http://localhost:5000, você irá ver a imagem que foi contruisda.
+    - Em http://localhost:5000, você irá ver a imagem que foi construida.
+   
+      **Exemplo**
 
+        ![Image](https://github.com/user-attachments/assets/47365a47-2667-463f-8a2e-c5467c4cc236)
 
 
 
