@@ -104,7 +104,7 @@ O objetivo desses exercícios é ensinar, na prática, como usar Docker para cri
           ![Image](https://github.com/user-attachments/assets/7c04a32f-f0fc-4285-9289-595bfb736aa7)
         
 
-     ## 3.1. Criando e rodando um container interativo.
+     ## 3.2. Criando e rodando um container interativo.
 
       - Primeiro temos que rodar um contaneir no Ubuntu que seja interativo, para isso, utilizamos o comando:
 
@@ -140,7 +140,21 @@ O objetivo desses exercícios é ensinar, na prática, como usar Docker para cri
            ./logs.sh
 
     -  Ele nós dara as seguintes informações, conforme a imagem. 
-        
+
+        ![Image](https://github.com/user-attachments/assets/2e2671f2-baa6-461d-871c-4f161db81436)
+
+
+  ## 3.3. Listando e removendo containers
+
+  - Para listar os contaneirs que estão em execução, utilizamos o comando:
+
+        docker ps
+
+  - Agora para listar todos os contaneirs que existem, utiliza-se o comando
+ 
+         docker ps -a
+
+    **Exemplo**
 
       
 
