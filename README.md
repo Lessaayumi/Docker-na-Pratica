@@ -156,6 +156,19 @@ O objetivo desses exercícios é ensinar, na prática, como usar Docker para cri
 
     **Exemplo**
 
+    ![Image](https://github.com/user-attachments/assets/b3e12d97-9953-4723-ba49-3c93be20f9c2)
+
+ - Para interromper a execução de um container utilizamos o comando:
+
+       docker stop nome_do_container
+
+- Para excluir utiliza-se o comando:
+
+       docker rm nome_do_container
+
+- Um comando que facilita caso todos containers parados não seja mais útils é `docker container prune`, ele irá remover todos os containers que não estão mais em execução.
+
+
       
 
 
