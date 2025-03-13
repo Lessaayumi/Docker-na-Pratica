@@ -9,11 +9,14 @@ Repositório com exercícios práticos de Docker, desde containers básicos até
    
 3. [Rodando containers simples, interagindo com terminais e gerenciando containers.](#Rodando-containers-simples,-interagindo-com-terminais-e-gerenciando-containers.)  
    3.1. [Rodando um container básico](#Rodando-um-container-básico)
+
    3.2. [Criando e rodando um container interativo.](#Criando-e-rodando-um-container-interativo.)
+
    3.3. [Listando e removendo containers.](#Listando-e-removendo-containers.)
+
    3.4. [Criando um Dockerfile para uma aplicação simples em Python.](#Criando-um-Dockerfile-para-uma-aplicação-simples-em-Python.)
    
-4. [Persistência de dados, redes Docker e otimização de imagens.](#Persistência-de-dados,-redes-Docker-e-otimização-de-imagens.)  
+5. [Persistência de dados, redes Docker e otimização de imagens.](#Persistência-de-dados,-redes-Docker-e-otimização-de-imagens.)  
    4.1. [Criando e utilizando volumes para persistência de dados.](#Criando-e-utilizando-volumes-para-persistência-de-dados.)
     
    4.2. [Criando e rodando um container multi-stage.](#Criando-e-rodando-um-container-multi-stage.)
@@ -22,12 +25,12 @@ Repositório com exercícios práticos de Docker, desde containers básicos até
 
    4.4. [Criando um compose file para rodar uma aplicação com banco de dados](#Criando-um-compose-file-para-rodar-uma-aplicação-com-banco-de-dados)
 
-5. [Construção de imagens personalizadas e configurações avançadas.](#Construção-de-imagens-personalizadas-e-configurações-avançadas.)  
+6. [Construção de imagens personalizadas e configurações avançadas.](#Construção-de-imagens-personalizadas-e-configurações-avançadas.)  
    5.1. [Criando uma imagem personalizada com um servidor web e arquivos estáticos.](#Criando-uma-imagem-personalizada-com-um-servidor-web-e-arquivos-estáticos.)
 
-6. [Considerações](#Considerações)
+7. [Considerações](#Considerações)
 
-7.  [Referências](#Referências)
+8.  [Referências](#Referências)
 
 # 1. Resumo e tecnologias:
 Este projeto reúne uma série de exercícios práticos para aprender Docker, desde a execução de containers básicos até configurações avançadas com Docker Compose, volumes e redes. Cada exercício inclui um exemplo real, como rodar um servidor web, gerenciar bancos de dados e otimizar aplicações.
