@@ -89,7 +89,25 @@ O objetivo desses exercícios é ensinar, na prática, como usar Docker para cri
       ![Image](https://github.com/user-attachments/assets/d6cb0ebc-f320-4c6d-b429-ea715f30b134)
       
     - **Explicações** O comando `docker run -d -p 8080:80 --name meu-nginx nginx` inicia um container em segundo plano (`-d`), utilizando a imagem do **Nginx**. A opção `-p 8080:80` define que a porta **80** do container será acessível pela porta **8080** da máquina host, permitindo que o Nginx seja acessado pelo navegador. O parâmetro `--name meu-nginx` atribui um nome personalizado ao container, facilitando sua identificação.
+
+      - Agora, vamos preparar um caminho para hospedarmos o site do Tailminds em nosso servidor. Com o comando abaixo vamos criar esse caminho.
+
+             mkdir meu-site && cd meu-site
+
+      - O próximo passo é baixar o script dinâmico do Tailmindcss, para isso, dentro da pasta meu-site vamos digitar o seguinte comando. E em seguida ja executar a aplicação.
+
+             curl -o tailwind.js https://cdn.tailwindcss.com
+             docker run --name meu-nginx-static -d -p 8080:80 -v $(pwd):/usr/share/nginx/html nginx
+
+      - Teremos a seguinte visualição quando acessarmos http://localhost:8080.
+
+        
+        
+
       
+
+
+        
       
 
       
