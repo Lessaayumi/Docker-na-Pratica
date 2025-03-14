@@ -173,6 +173,20 @@ O objetivo desses exercícios é ensinar, na prática, como usar Docker para cri
 
          mkdir flask-app && cd flask-app
 
+  - Agora dentro da pasta criaremos a aplicação app.py, que é a aplicação que estará nosso script:
+
+        from flask import Flask
+
+        app = Flask(__name__)
+
+        @app.route("/")
+        def home():
+        return {"message": "Hello, Docker with Flask!"}
+
+        if __name__ == "__main__":
+        app.run(host="0.0.0.0", port=5000)
+
+
   - Dentro da pasta flask-app iremos criar o arquivo com o comando `nano nome_do_arquivo`, dentro desse arquivo iremos agregar o seguinte script:
 
         echo "from flask import Flask
@@ -213,9 +227,20 @@ O objetivo desses exercícios é ensinar, na prática, como usar Docker para cri
 
       docker run -d --name meu-mysql -e MYSQL_ROOT_PASSWORD=root -v mysql_data:/var/lib/mysql mysql:latest
 
-- Esse comando inicia um container MySQL em modo desacoplado (-d), atribui a ele o nome meu-mysql e define a senha do usuário root. Além disso, associa o volume mysql_data ao diretório **/var/lib/mysql**, garantindo a persistência das informações armazenadas no banco de dados.
+- Esse comando inicia um container MySQL em modo desacoplado (-d), atribui a ele o nome meu-mysql e define a senha do usuário root. Além disso, associa o volume mysql_data ao diretório **/var/lib/mysql**, garantindo a persistência das informações armazenadas no banco de dados. Agora vamos executar o container MySQL associando o volume criado:
 
-- Por fim, para acessar o MySQL dentro do container, utilizamos o seguinte comando:
+      docker run -d \
+       --name mysql-container \
+       -e MYSQL_ROOT_PASSWORD=rootpassword \
+       -e MYSQL_DATABASE=laravel \
+       -e MYSQL_USER=laravel_user \
+       -e MYSQL_PASSWORD=laravel_password \
+       -p 3306:3306 \
+       -v mysql_data:/var/lib/mysql \
+        mysql:latest
+
+
+- Por fim, para acessar o MySQL dentro do container, utilizamos o seguinte comando e digite a senha que você gerou no comando:
 
       docker exec -it meu-mysql mysql -u root -p
   
@@ -226,38 +251,71 @@ O objetivo desses exercícios é ensinar, na prática, como usar Docker para cri
 ![Image](https://github.com/user-attachments/assets/a2231766-3be7-41a5-b51c-3f85256bdb3a)
 
  ## 4.2. Criando e rodando um container multi-stage.
+- Primeiro passo para criar a aplicação é criar o arquivo main.go (`nano main.go`), e dentro dele colocar o seguinte contéudo:
 
- - O primeiro comando que vamos utilizar é, para clonar o repósitorio do Go Fiber.
+      package main
 
-        git clone https://github.com/gofiber/recipes.git
-        cd recipes/dockerls
+      import (
+      "github.com/gofiber/fiber/v2"
+      )
 
-- Em seguida deve-se criar um DockerFile utilizando o comando `nano`
+      func main() {
+        app := fiber.New()
 
-      nano Dockerfile
+      app.Get("/", func(c *fiber.Ctx) error {
+           return c.SendString("Hello, Fiber!")
+       })
 
-- Dentro desse dockerfile iremos por as seguintes informações:
+      app.Listen(":3000")
+      }
 
-      FROM golang:1.23 AS builder #Usa a imagem oficial do Go (1.23) para ter todas as ferramentas necessárias.
-      WORKDIR /app #Define o diretório /app dentro do container.
-      COPY . . #Copia o código-fonte para o container.
-      RUN go mod tidy && go build -o server . #Baixa as dependências e compila o código Go em um binário chamado server.
+- Agora iremos criar um Dockerfile (`Dockerfile`), utilizando o multi-stage build. O primeiro estágio irá compilar o código Go, e o segundo estágio irá copiar os artefatos compilados para uma imagem mais enxuta.
 
-      FROM alpine:latest #Usa a imagem mínima Alpine Linux
-      WORKDIR /root/ #Define um diretório /root/ para rodar a aplicação.
-      COPY --from=builder /app/server . #Copia apenas o binário compilado da primeira fase
-      EXPOSE 8080 #Expõe a porta 8080
+      # Etapa 1: Build (usando a imagem do Go para compilar)
+      FROM golang:1.20 AS builder
 
-      CMD ["./server"] #Define o comando que inicia o servidor
+      # Definindo o diretório de trabalho
+      WORKDIR /app
 
-  - Execute o seguinte comando dentro da pasta onde está o Dockerfile, ele irá baixar a imagem do Go e compila o projeto.
+      # Copiar os arquivos do projeto para o diretório de trabalho
+      COPY . .
 
-        docker build -t go-fiber-app .
+      # Baixar as dependências do Go (vai usar go.mod e go.sum)
+      RUN go mod tidy
 
-    - Para rodar o container:
-   
-          docker run -p 8080:8080 go-fiber-app
-      **PRECISO REVER ESSE EXERCICIO**
+      # Compilar o aplicativo Go
+      RUN go build -o app .
+
+      # Etapa 2: Imagem final (imagem menor para rodar a aplicação)
+      FROM debian:bullseye-slim
+
+      # Copiar o binário compilado da etapa anterior
+      COPY --from=builder /app/app /app
+
+      # Expor a porta em que a aplicação vai rodar
+      EXPOSE 3000
+
+      # Comando para rodar a aplicação
+      CMD ["/app"]
+
+  - Em seguida crie o arquivo go.mod(`nano main.go`), para gerenciar as dependências do Go, ele criará o go.mod e go.sum automaticamente.
+ 
+        go mod init fiber-api
+        go get github.com/gofiber/fiber/v2
+
+  - O próximo passo é construir a imagem do Docker com o comando `docker build -t go-fiber-api .`, esse comando irá passar pela etapa de build, onde o Go será compilado na imagem maior e, em seguida, a aplicação compilada será copiada para uma imagem mais enxuta baseada no Debian Slim. E por fim para executar o container utilizaremos o comando `docker run -p 3000:3000 go-fiber-api`.
+ 
+    **TESTES:**
+
+- No navegador digite http://localhost:3000, que ele levará a seguinte imagem.
+
+  
+
+  
+
+
+
+  
 
    ##  4.3. Construindo uma rede Docker para comunicação entre containers.
   - Antes de iniciar os containers, crie uma rede personalizada para permitir a comunicação entre eles:
