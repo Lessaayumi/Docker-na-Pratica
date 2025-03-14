@@ -223,6 +223,86 @@ O objetivo desses exercícios é ensinar, na prática, como usar Docker para cri
 
   **Exemplo:**
 
+![Image](https://github.com/user-attachments/assets/a2231766-3be7-41a5-b51c-3f85256bdb3a)
+
+ ## 4.2. Criando e rodando um container multi-stage.
+
+ - O primeiro comando que vamos utilizar é, para clonar o repósitorio do Go Fiber.
+
+        git clone https://github.com/gofiber/recipes.git
+        cd recipes/dockerls
+
+- Em seguida deve-se criar um DockerFile utilizando o comando `nano`
+
+      nano Dockerfile
+
+- Dentro desse dockerfile iremos por as seguintes informações:
+
+      FROM golang:1.23 AS builder #Usa a imagem oficial do Go (1.23) para ter todas as ferramentas necessárias.
+      WORKDIR /app #Define o diretório /app dentro do container.
+      COPY . . #Copia o código-fonte para o container.
+      RUN go mod tidy && go build -o server . #Baixa as dependências e compila o código Go em um binário chamado server.
+
+      FROM alpine:latest #Usa a imagem mínima Alpine Linux
+      WORKDIR /root/ #Define um diretório /root/ para rodar a aplicação.
+      COPY --from=builder /app/server . #Copia apenas o binário compilado da primeira fase
+      EXPOSE 8080 #Expõe a porta 8080
+
+      CMD ["./server"] #Define o comando que inicia o servidor
+
+  - Execute o seguinte comando dentro da pasta onde está o Dockerfile, ele irá baixar a imagem do Go e compila o projeto.
+
+        docker build -t go-fiber-app .
+
+    - Para rodar o container:
+   
+          docker run -p 8080:8080 go-fiber-app
+      **PRECISO REVER ESSE EXERCICIO**
+
+   ##  4.3. Construindo uma rede Docker para comunicação entre containers.
+  - Antes de iniciar os containers, crie uma rede personalizada para permitir a comunicação entre eles:
+
+        docker network create minha-rede
+
+  - Agora, suba um container MongoDB e conecte-o à rede criada:
+ 
+        docker run -d \
+        --name meu-mongo \
+        --network minha-rede \
+        -e MONGO_INITDB_ROOT_USERNAME=admin \
+        -e MONGO_INITDB_ROOT_PASSWORD=admin123 \
+        -p 27017:27017 \
+        mongo
+
+    - Isso iniciará um container MongoDB com um usuário root. Clone o repositório MEAN Todos (ou crie um projeto básico Node.js):
+
+          git clone https://github.com/meanjs/mean.git mean-todos
+          cd mean-todos
+
+    - Dentro da pasta do projeto, crie um arquivo Dockerfile:
+   
+           FROM node:16
+
+          WORKDIR /app
+
+          COPY package*.json ./
+
+          RUN npm install
+  
+          COPY . .
+
+          EXPOSE 3000
+
+          CMD ["node", "server.js"]
+
+
+
+
+    
+
+   
+
+
   
 
    
