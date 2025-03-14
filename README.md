@@ -281,19 +281,271 @@ O objetivo desses exercícios é ensinar, na prática, como usar Docker para cri
 
     - Dentro da pasta do projeto, crie um arquivo Dockerfile:
    
-           FROM node:16
-
+          FROM node:16
           WORKDIR /app
-
           COPY package*.json ./
-
           RUN npm install
-  
           COPY . .
-
           EXPOSE 3000
-
           CMD ["node", "server.js"]
+
+    - Agora, crie um docker-compose.yml para subir ambos os containers:
+   
+          version: '3'
+          services:
+          mongo:
+            image: mongo
+            container_name: meu-mongo
+          networks:
+             minha-rede
+          environment:
+            MONGO_INITDB_ROOT_USERNAME: admin
+            MONGO_INITDB_ROOT_PASSWORD: admin123
+          ports:
+            "27017:27017"
+
+          node:
+           build: .
+           container_name: meu-node
+          networks:
+          - minha-rede
+          depends_on:
+          - mongo
+          ports:
+          - "3000:3000"
+
+           networks:
+           minha-rede:
+           driver: bridge
+
+    - Agora, execute o docker-compose para iniciar os serviços:
+
+          docker-compose up -d
+
+    - Para verificar se o Node.js consegue se conectar ao MongoDB:
+   
+          docker logs meu-node
+
+    - Para acessar o Node.js:
+   
+          curl http://localhost:3000
+
+## 4.4. Criando um compose file para rodar uma aplicação com banco de dados
+   - Se ainda não tem um projeto Django, crie um com os seguintes comandos:
+
+          mkdir django-polls && cd django-polls
+          django-admin startproject pollsapp .
+
+     - Crie um arquivo chamado Dockerfile na raiz do projeto e adicione o seguinte conteúdo:
+    
+            # Usa a imagem oficial do Python
+            FROM python:3.10
+
+            # Define o diretório de trabalho no container
+            WORKDIR /app
+
+            # Copia os arquivos para dentro do container
+            COPY requirements.txt .
+            COPY . .
+
+           # Instala as dependências
+           RUN pip install --no-cache-dir -r requirements.txt
+
+           # Expõe a porta 8000
+           EXPOSE 8000
+
+           # Comando para rodar a aplicação Django
+           CMD ["python", "manage.py", "runserver", "0.0.0.0:8000"]
+
+  - Crie o arquivo requirements.txt com as dependências do projeto:
+
+        Django
+        psycopg2-binary
+
+   - Agora, crie o arquivo docker-compose.yml para configurar os serviços Django e PostgreSQL:
+
+    version: '3.8'
+
+    services:
+    db:
+    image: postgres:latest
+    container_name: postgres_db
+    restart: always
+    environment:
+      POSTGRES_DB: django_db
+      POSTGRES_USER: admin
+      POSTGRES_PASSWORD: admin123
+    ports:
+      - "5432:5432"
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+
+     web:
+    build: .
+    container_name: django_app
+    restart: always
+    depends_on:
+      - db
+    ports:
+      - "8000:8000"
+    environment:
+      - DATABASE_NAME=django_db
+      - DATABASE_USER=admin
+      - DATABASE_PASSWORD=admin123
+      - DATABASE_HOST=db
+      - DATABASE_PORT=5432
+    volumes:
+      - .:/app
+
+    volumes:
+     postgres_data:
+
+   - No arquivo pollsapp/settings.py, altere a configuração do banco de dados para usar PostgreSQL:
+
+         DATABASES = {
+         'default': {
+          'ENGINE': 'django.db.backends.postgresql',
+          'NAME': 'django_db',
+          'USER': 'admin',
+          'PASSWORD': 'admin123',
+          'HOST': 'db',
+          'PORT': '5432',
+          }
+         }
+
+- Execute os seguintes comandos para subir a aplicação:
+
+      docker-compose up -d
+
+- DDepois, aplique as migrações do Django:
+
+       docker exec -it django_app python manage.py migrate
+
+- E crie um superusuário para acessar o admin do Django:
+
+      docker exec -it django_app python manage.py createsuperuser
+
+
+  ## 5. Construção de imagens personalizadas e configurações avançadas.
+  ##     5.1. Criando uma imagem personalizada com um servidor web e arquivos estáticos.
+    - Crie uma pasta para o projeto e entre nela:
+
+          mkdir nginx-static-site && cd nginx-static-site
+
+    - Dentro da pasta, crie a seguinte estrutura:
+ 
+          nginx-static-site/
+          │── site/
+          │   ├── index.html
+          │   ├── styles.css
+          │── Dockerfile
+          │── nginx.conf
+          │── docker-compose.yml
+
+  - Dentro da pasta site/, crie um arquivo index.html com o seguinte conteúdo:
+ 
+    
+        <!DOCTYPE html>
+        <html lang="pt">
+        <head>
+           <meta charset="UTF-8">
+           <meta name="viewport" content="width=device-width, initial-scale=1.0">
+           <title>Minha Página Estática</title>
+           <link rel="stylesheet" href="styles.css">
+        </head>
+        <body>
+           <h1>Bem-vindo ao meu site estático!</h1>
+           <p>Este site está rodando dentro de um container Docker com Nginx.</p>
+        </body>
+        </html>
+
+    - Agora, crie o arquivo styles.css:
+   
+          body {
+          font-family: Arial, sans-serif;
+          text-align: center;
+          background-color: #f4f4f4;
+          color: #333;
+           }
+
+      - Crie o arquivo nginx.conf na raiz do projeto:
+     
+            server {
+            listen 80;
+            server_name localhost;
+
+            location / {
+            root /usr/share/nginx/html;
+            index index.html;
+            }
+            }
+
+    - Crie o arquivo Dockerfile na raiz do projeto:
+
+          # Usa a imagem oficial do Nginx
+          FROM nginx:latest
+
+          # Copia o arquivo de configuração do Nginx
+          COPY nginx.conf /etc/nginx/conf.d/default.conf
+
+          # Copia os arquivos do site para a pasta padrão do Nginx
+          COPY site/ /usr/share/nginx/html/
+
+          # Expõe a porta 80
+          EXPOSE 80
+
+          # Inicia o Nginx
+          CMD ["nginx", "-g", "daemon off;"]
+
+     - Crie o arquivo docker-compose.yml para facilitar a execução:
+
+           version: '3.8'
+
+           services:
+            web:
+              build: .
+              container_name: nginx_static
+              ports:
+                - "8080:80"
+              volumes:
+                - ./site:/usr/share/nginx/html
+              restart: always
+
+    - Agora, execute os comandos abaixo para construir a imagem e iniciar o container:
+   
+          docker-compose up -d --build
+
+
+      ## 6. Considerações
+Trabalhar com **Docker, WSL e Ubuntu** para configurar aplicações completas envolve desafios e boas práticas que garantem a funcionalidade e a comunicação entre os containers.
+Trabalhar com Docker Compose e gerenciar múltiplos containers exige atenção a detalhes como redes, volumes, compatibilidade de versões e ordem de inicialização dos serviços. Algumas boas práticas para evitar problemas incluem:  
+
+- Verificar compatibilidade de versões das imagens antes de usá-las.  
+- Utilizar volumes para persistência de dados em bancos de dados e arquivos estáticos.  
+- Gerenciar a comunicação entre containers corretamente usando nomes de serviço ao invés de `localhost`.  
+- Utilizar logs (`docker logs <container>`) para depurar erros e entender o que está acontecendo.  
+- Reconstruir imagens sempre que fizer alterações importantes (`docker-compose up -d --build`).  
+## 7. Referêmcias
+-https://testdriven.io/blog/dockerizing-django-with-postgres-gunicorn-and-nginx/?utm_source=chatgpt.com - acesso 13/03/2025
+
+-https://github.com/nishanttotla/DockerStaticSite?utm_source=chatgpt.com - acesso 13/03/2025
+
+-https://docs.docker.com/reference/samples/django/ - acesso 14/04/2025
+
+
+      
+
+
+
+
+  
+     
+
+     
+
+
+
+
 
 
 
