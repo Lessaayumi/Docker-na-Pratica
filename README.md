@@ -16,7 +16,7 @@ Repositório com exercícios práticos de Docker, desde containers básicos até
 
    3.4. [Criando um Dockerfile para uma aplicação simples em Python.](#Criando-um-Dockerfile-para-uma-aplicação-simples-em-Python.)
    
-5. [Persistência de dados, redes Docker e otimização de imagens.](#Persistência-de-dados,-redes-Docker-e-otimização-de-imagens.)  
+4. [Persistência de dados, redes Docker e otimização de imagens.](#Persistência-de-dados,-redes-Docker-e-otimização-de-imagens.)  
    4.1. [Criando e utilizando volumes para persistência de dados.](#Criando-e-utilizando-volumes-para-persistência-de-dados.)
     
    4.2. [Criando e rodando um container multi-stage.](#Criando-e-rodando-um-container-multi-stage.)
@@ -25,12 +25,12 @@ Repositório com exercícios práticos de Docker, desde containers básicos até
 
    4.4. [Criando um compose file para rodar uma aplicação com banco de dados](#Criando-um-compose-file-para-rodar-uma-aplicação-com-banco-de-dados)
 
-6. [Construção de imagens personalizadas e configurações avançadas.](#Construção-de-imagens-personalizadas-e-configurações-avançadas.)  
+5. [Construção de imagens personalizadas e configurações avançadas.](#Construção-de-imagens-personalizadas-e-configurações-avançadas.)  
    5.1. [Criando uma imagem personalizada com um servidor web e arquivos estáticos.](#Criando-uma-imagem-personalizada-com-um-servidor-web-e-arquivos-estáticos.)
 
-7. [Considerações](#Considerações)
+6. [Considerações](#Considerações)
 
-8.  [Referências](#Referências)
+7.  [Referências](#Referências)
 
 # 1. Resumo e tecnologias:
 Este projeto reúne uma série de exercícios práticos para aprender Docker, desde a execução de containers básicos até configurações avançadas com Docker Compose, volumes e redes. Cada exercício inclui um exemplo real, como rodar um servidor web, gerenciar bancos de dados e otimizar aplicações.
@@ -199,6 +199,31 @@ O objetivo desses exercícios é ensinar, na prática, como usar Docker para cri
 
         ![Image](https://github.com/user-attachments/assets/47365a47-2667-463f-8a2e-c5467c4cc236)
 
+
+## 4. Persistência de dados, redes Docker e otimização de imagens.
+   ## 4.1. Criando e utilizando volumes para persistência de dados.
+
+- O passo inicial consiste na criação do volume por meio do comando:
+
+       docker volume create mysql_data
+
+- Esse procedimento garante a persistência dos dados do MySQL, permitindo sua reutilização independentemente do ciclo de vida dos containers.O próximo passo consiste na execução do container MySQL com persistência de dados. Para isso, utilizamos o seguinte comando:
+
+      docker run -d --name meu-mysql -e MYSQL_ROOT_PASSWORD=root -v mysql_data:/var/lib/mysql mysql:latest
+
+- Esse comando inicia um container MySQL em modo desacoplado (-d), atribui a ele o nome meu-mysql e define a senha do usuário root. Além disso, associa o volume mysql_data ao diretório **/var/lib/mysql**, garantindo a persistência das informações armazenadas no banco de dados.
+
+- Por fim, para acessar o MySQL dentro do container, utilizamos o seguinte comando:
+
+      docker exec -it meu-mysql mysql -u root -p
+  
+- Esse comando executa uma instância interativa (-it) do MySQL dentro do container meu-mysql, permitindo o acesso ao banco de dados com o usuário root. Assim, garantimos que o volume foi corretamente criado e está armazenando os dados de forma persistente.
+
+  **Exemplo:**
+
+  
+
+   
 
 
         
