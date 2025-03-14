@@ -287,7 +287,7 @@ O objetivo desses exercícios é ensinar, na prática, como usar Docker para cri
       RUN go build -o app .
 
       # Etapa 2: Imagem final (imagem menor para rodar a aplicação)
-      FROM debian:bullseye-slim
+      FROM ubuntu:22.04
 
       # Copiar o binário compilado da etapa anterior
       COPY --from=builder /app/app /app
@@ -308,92 +308,15 @@ O objetivo desses exercícios é ensinar, na prática, como usar Docker para cri
  ![Image](https://github.com/user-attachments/assets/1a4a2d62-8732-43ea-9290-e40208982c76)
     
  
-    **TESTES:**
+   TESTES:
 
 - No navegador digite http://localhost:3000, que ele levará a seguinte imagem.
 
   ![Image](https://github.com/user-attachments/assets/b8e6d5eb-94fc-40a5-9c27-ed51f972126b)
 
 
-
-  
-
-  
-
-
-
-  
-
    ##  4.3. Construindo uma rede Docker para comunicação entre containers.
-  - Antes de iniciar os containers, crie uma rede personalizada para permitir a comunicação entre eles:
-
-        docker network create minha-rede
-
-  - Agora, suba um container MongoDB e conecte-o à rede criada:
- 
-        docker run -d \
-        --name meu-mongo \
-        --network minha-rede \
-        -e MONGO_INITDB_ROOT_USERNAME=admin \
-        -e MONGO_INITDB_ROOT_PASSWORD=admin123 \
-        -p 27017:27017 \
-        mongo
-
-    - Isso iniciará um container MongoDB com um usuário root. Clone o repositório MEAN Todos (ou crie um projeto básico Node.js):
-
-          git clone https://github.com/meanjs/mean.git mean-todos
-          cd mean-todos
-
-    - Dentro da pasta do projeto, crie um arquivo Dockerfile:
-   
-          FROM node:16
-          WORKDIR /app
-          COPY package*.json ./
-          RUN npm install
-          COPY . .
-          EXPOSE 3000
-          CMD ["node", "server.js"]
-
-    - Agora, crie um docker-compose.yml para subir ambos os containers:
-   
-          version: '3'
-          services:
-          mongo:
-            image: mongo
-            container_name: meu-mongo
-          networks:
-             minha-rede
-          environment:
-            MONGO_INITDB_ROOT_USERNAME: admin
-            MONGO_INITDB_ROOT_PASSWORD: admin123
-          ports:
-            "27017:27017"
-
-          node:
-           build: .
-           container_name: meu-node
-          networks:
-          - minha-rede
-          depends_on:
-          - mongo
-          ports:
-          - "3000:3000"
-
-           networks:
-           minha-rede:
-           driver: bridge
-
-    - Agora, execute o docker-compose para iniciar os serviços:
-
-          docker-compose up -d
-
-    - Para verificar se o Node.js consegue se conectar ao MongoDB:
-   
-          docker logs meu-node
-
-    - Para acessar o Node.js:
-   
-          curl http://localhost:3000
+  
 
 ## 4.4. Criando um compose file para rodar uma aplicação com banco de dados
    - Se ainda não tem um projeto Django, crie um com os seguintes comandos:
