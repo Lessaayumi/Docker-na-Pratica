@@ -315,9 +315,138 @@ O objetivo desses exercícios é ensinar, na prática, como usar Docker para cri
   ![Image](https://github.com/user-attachments/assets/b8e6d5eb-94fc-40a5-9c27-ed51f972126b)
 
 
-   ##  4.3. Construindo uma rede Docker para comunicação entre containers.
-  
+   ##  4.3. Construindo uma rede Docker para comunicação entre containers. **DIFICULDADE AQUI!**
+  - Primeiro vamos criar um arquivo Dockerfile (`Dockerfile`), para o container Node.js que será responsável pela aplicação backend (API).
 
+        # Usar imagem oficial do Node.js
+        FROM node:16
+
+        # Definir o diretório de trabalho dentro do container
+        WORKDIR /app
+
+        # Copiar o package.json e o package-lock.json para o diretório de trabalho
+        COPY package*.json ./
+
+        # Instalar as dependências da aplicação
+        RUN npm install
+
+        # Copiar o restante dos arquivos da aplicação
+        COPY . .
+
+        # Expor a porta onde o app vai rodar
+        EXPOSE 3000
+
+        # Rodar a aplicação quando o container iniciar
+        CMD ["npm", "start"]
+
+    - O próximo passo é criar é criar um docker-compose.yml ( `nano docker-compose.yml`), ele irá definir a rede personalizada, o container do Node.js e o container do MongoDB.
+   
+          version: '3'
+
+          services:
+            nodejs:
+            build
+             context: .
+                dockerfile: Dockerfile
+          ports:
+             - "3000:3000"
+          networks:
+            - todos-network
+          environment:
+            - MONGO_URI=mongodb://mongo:27017/todos
+          depends_on:
+           - mongo
+          restart: always
+
+          mongo:
+           image: mongo:latest
+           ports:
+            - "27017:27017"
+          networks:
+           - todos-network
+          restart: always
+ 
+          networks:
+          todos-network:
+          driver: bridge
+
+    - Agora, crie um arquivo app.js (`nano app.js`) para a API do Node.js que irá se conectar ao MongoDB e criar endpoints para as tarefas.
+   
+          const express = require('express');
+          const mongoose = require('mongoose');
+          const cors = require('cors');
+
+          // Inicializando o Express
+          const app = express();
+
+          // Conexão com o MongoDB
+          mongoose.connect(process.env.MONGO_URI, { useNewUrlParser: true, useUnifiedTopology: true })
+          .then(() => console.log('Conectado ao MongoDB'))
+          .catch(err => console.log('Erro de conexão com o MongoDB', err));
+
+          // Middleware
+          app.use(cors());
+          app.use(express.json());
+
+          // Definindo o modelo de Tarefa (todos)
+          const Task = mongoose.model('Task', new mongoose.Schema({
+          task: String,
+          completed: { type: Boolean, default: false }
+          }));
+
+          // Rotas
+          app.get('/tasks', async (req, res) => {
+          const tasks = await Task.find();
+          res.json(tasks);
+          });
+
+          app.post('/tasks', async (req, res) => {
+          const task = new Task({ task: req.body.task });
+          await task.save();
+          res.status(201).json(task);
+          });
+
+          app.put('/tasks/:id', async (req, res) => {
+          const task = await Task.findByIdAndUpdate(req.params.id, req.body, { new: true });
+          res.json(task);
+          });
+
+          app.delete('/tasks/:id', async (req, res) => {
+          await Task.findByIdAndDelete(req.params.id);
+          res.status(204).end();
+          });
+
+          // Iniciar o servidor
+          app.listen(3000, () => {
+          console.log('Server rodando na porta 3000');
+          });
+
+    - Agora crie o arquivo package.json (`nano packge.json`) para a aplicação Node.js com as dependências necessárias.
+   
+           {
+             "name": "mean-todos",
+             "version": "1.0.0",
+             "description": "App de tarefas com Node.js e MongoDB",
+             "main": "app.js",
+             "scripts": {
+             "start": "node app.js"
+          },
+            "dependencies": {
+            "cors": "^2.8.5",
+            "express": "^4.17.1",
+            "mongoose": "^5.9.25"
+          },
+           "author": "",
+           "license": "ISC"
+          }
+
+      - Agora, no diretório onde estão o docker-compose.yml, Dockerfile, app.js, e package.json, execute os seguintes comandos para construir e rodar os containers:
+     
+            docker-compose up --build
+
+        ![Image](https://github.com/user-attachments/assets/47e9492e-f82d-435e-9764-9856f2bcc70f)
+
+        
 ## 4.4. Criando um compose file para rodar uma aplicação com banco de dados
    - Se ainda não tem um projeto Django, crie um com os seguintes comandos:
 
