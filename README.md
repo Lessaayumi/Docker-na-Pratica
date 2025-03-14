@@ -448,12 +448,16 @@ O objetivo desses exercícios é ensinar, na prática, como usar Docker para cri
 
         
 ## 4.4. Criando um compose file para rodar uma aplicação com banco de dados
-   - Se ainda não tem um projeto Django, crie um com os seguintes comandos:
+   - Primeiro, crie um diretório para o seu projeto, caso ainda não tenha um. Em seguida, entre na pasta e inicialize o projeto Django:
 
-          mkdir django-polls && cd django-polls
-          django-admin startproject pollsapp .
+         mkdir django-polls-app
+         cd django-polls-app
+         python3 -m venv venv
+         source venv/bin/activate
+         pip install django
+         django-admin startproject polls_project .
 
-     - Crie um arquivo chamado Dockerfile na raiz do projeto e adicione o seguinte conteúdo:
+- Crie o app "polls": Dentro do projeto Django, crie o app chamado polls:
     
             # Usa a imagem oficial do Python
             FROM python:3.10
