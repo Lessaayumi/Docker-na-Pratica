@@ -304,10 +304,17 @@ O objetivo desses exercícios é ensinar, na prática, como usar Docker para cri
         go get github.com/gofiber/fiber/v2
 
   - O próximo passo é construir a imagem do Docker com o comando `docker build -t go-fiber-api .`, esse comando irá passar pela etapa de build, onde o Go será compilado na imagem maior e, em seguida, a aplicação compilada será copiada para uma imagem mais enxuta baseada no Debian Slim. E por fim para executar o container utilizaremos o comando `docker run -p 3000:3000 go-fiber-api`.
+
+ ![Image](https://github.com/user-attachments/assets/1a4a2d62-8732-43ea-9290-e40208982c76)
+    
  
     **TESTES:**
 
 - No navegador digite http://localhost:3000, que ele levará a seguinte imagem.
+
+  ![Image](https://github.com/user-attachments/assets/b8e6d5eb-94fc-40a5-9c27-ed51f972126b)
+
+
 
   
 
