@@ -207,6 +207,8 @@ O objetivo desses exercícios é ensinar, na prática, como usar Docker para cri
 
        docker volume create mysql_data
 
+  ![Image](https://github.com/user-attachments/assets/150fd3fa-dd5b-4588-a473-5e6a6d4bdb85)
+
 - Esse procedimento garante a persistência dos dados do MySQL, permitindo sua reutilização independentemente do ciclo de vida dos containers.O próximo passo consiste na execução do container MySQL com persistência de dados. Para isso, utilizamos o seguinte comando:
 
       docker run -d --name meu-mysql -e MYSQL_ROOT_PASSWORD=root -v mysql_data:/var/lib/mysql mysql:latest
