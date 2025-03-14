@@ -485,41 +485,38 @@ O objetivo desses exercícios é ensinar, na prática, como usar Docker para cri
 
    - Agora, crie o arquivo docker-compose.yml para configurar os serviços Django e PostgreSQL:
 
-    version: '3.8'
+         version: '3.8'
 
-    services:
-    db:
-    image: postgres:latest
-    container_name: postgres_db
-    restart: always
-    environment:
-      POSTGRES_DB: django_db
-      POSTGRES_USER: admin
-      POSTGRES_PASSWORD: admin123
-    ports:
-      - "5432:5432"
-    volumes:
-      - postgres_data:/var/lib/postgresql/data
+          services:
+         db:
+         image: postgres:latest
+         container_name: postgres_db
+         restart: always
+         environment:
+          POSTGRES_DB: django_db
+          POSTGRES_USER: admin
+          POSTGRES_PASSWORD: admin123
+         ports:
+          - "5432:5432"
+         volumes:
+          - postgres_data:/var/lib/postgresql/data
 
-     web:
-    build: .
-    container_name: django_app
-    restart: always
-    depends_on:
-      - db
-    ports:
-      - "8000:8000"
-    environment:
-      - DATABASE_NAME=django_db
-      - DATABASE_USER=admin
-      - DATABASE_PASSWORD=admin123
-      - DATABASE_HOST=db
-      - DATABASE_PORT=5432
-    volumes:
-      - .:/app
+         web:
+           build: .
+           container_name: django_app
+           restart: always
+           depends_on:
+             - db
+          ports:
+             - "8000:8000"
+         environment:
+              DATABASE_URL: postgres://postgres:postgres@db:5432/pollsdb
+             
+         volumes:
+          - .:/app
 
-    volumes:
-     postgres_data:
+         volumes:
+           postgres_data:
 
    - No arquivo pollsapp/settings.py, altere a configuração do banco de dados para usar PostgreSQL:
 
@@ -546,14 +543,21 @@ O objetivo desses exercícios é ensinar, na prática, como usar Docker para cri
 
       docker exec -it django_app python manage.py createsuperuser
 
+- Se acessarmos localhost:8000, veremos que a aplicação está rodando.
+
+  ![Image](https://github.com/user-attachments/assets/6bac85ef-b9c1-4ca5-ba27-4209db6c549e)
+
 
   ## 5. Construção de imagens personalizadas e configurações avançadas.
   ##     5.1. Criando uma imagem personalizada com um servidor web e arquivos estáticos.
     - Crie uma pasta para o projeto e entre nela:
-
-          mkdir nginx-static-site && cd nginx-static-site
-
-    - Dentro da pasta, crie a seguinte estrutura:
+      
+          mkdir nginx-static-site
+          cd nginx-static-site
+          mkdir site
+   
+         
+- Dentro da pasta, crie a seguinte estrutura:
  
           nginx-static-site/
           │── site/
@@ -565,20 +569,8 @@ O objetivo desses exercícios é ensinar, na prática, como usar Docker para cri
 
   - Dentro da pasta site/, crie um arquivo index.html com o seguinte conteúdo:
  
-    
-        <!DOCTYPE html>
-        <html lang="pt">
-        <head>
-           <meta charset="UTF-8">
-           <meta name="viewport" content="width=device-width, initial-scale=1.0">
-           <title>Minha Página Estática</title>
-           <link rel="stylesheet" href="styles.css">
-        </head>
-        <body>
-           <h1>Bem-vindo ao meu site estático!</h1>
-           <p>Este site está rodando dentro de um container Docker com Nginx.</p>
-        </body>
-        </html>
+        <a href="sobre.html">Sobre Nós</a>
+
 
     - Agora, crie o arquivo styles.css:
    
@@ -605,12 +597,15 @@ O objetivo desses exercícios é ensinar, na prática, como usar Docker para cri
 
           # Usa a imagem oficial do Nginx
           FROM nginx:latest
+   
+          # Remove a configuração padrão do Nginx
+          RUN rm -rf /usr/share/nginx/html/*
 
           # Copia o arquivo de configuração do Nginx
           COPY nginx.conf /etc/nginx/conf.d/default.conf
 
           # Copia os arquivos do site para a pasta padrão do Nginx
-          COPY site/ /usr/share/nginx/html/
+          COPY ./site /usr/share/nginx/html/
 
           # Expõe a porta 80
           EXPOSE 80
@@ -618,24 +613,37 @@ O objetivo desses exercícios é ensinar, na prática, como usar Docker para cri
           # Inicia o Nginx
           CMD ["nginx", "-g", "daemon off;"]
 
-     - Crie o arquivo docker-compose.yml para facilitar a execução:
+     - Crie o arquivo em html `nano nome.html`:
 
-           version: '3.8'
+           <!DOCTYPE html>
+            <html lang="pt">
+            <head>
+               <meta charset="UTF-8">
+               <meta name="viewport" content="width=device-width, initial-scale=1.0">
+               <title>Sobre Nós</title>
+               <link rel="stylesheet" href="style.css">
+           </head>
+           <body>
+               <h1>Sobre Nós</h1>
+               <p>Esta é a página sobre o nosso projeto!</p>
+               <a href="index.html">Voltar para Home</a>
+                </body>
+           </html>
 
-           services:
-            web:
-              build: .
-              container_name: nginx_static
-              ports:
-                - "8080:80"
-              volumes:
-                - ./site:/usr/share/nginx/html
-              restart: always
+   - Agora temos que construir a imaagem utilizando o comando:
 
-    - Agora, execute os comandos abaixo para construir a imagem e iniciar o container:
-   
-          docker-compose up -d --build
+         docker build -t meu-site-nginx .
 
+
+   - Agora, execute os comandos abaixo para  iniciar o container:
+
+         docker run -d -p 8080:80 --name site-container meu-site-nginx
+
+ - Acesse http://localhost:8080/sobre.html que ele executará a pagina html criada:
+
+   ![Image](https://github.com/user-attachments/assets/269e3c1f-c6f3-4cd2-9c84-ffe540bff6b8)
+
+   ![Image](https://github.com/user-attachments/assets/e075e734-a3d6-4a8f-8a4f-2a775f08b957)   
 
       ## 6. Considerações
 Trabalhar com **Docker, WSL e Ubuntu** para configurar aplicações completas envolve desafios e boas práticas que garantem a funcionalidade e a comunicação entre os containers.
